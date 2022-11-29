@@ -1,20 +1,21 @@
 import sqlite3
+from visitor_log import Visitor
 
-connect = sqlite3.connect('visitors.db')
-
-grab = connect.cursor()
+db = sqlite3.connect('visitors.db')
+grab = db.cursor()
 
 # grab.execute("""CREATE TABLE visits(
 #             name text,
 #             location text  
 #             )""")
-# grab.execute("INSERT INTO visits VALUES ('Marry', 'Michigan')")
 
+visitor = Visitor('Jimmy', 'Michigan') 
+# grab.execute("INSERT INTO visits VALUES ('Marcus', 'Michigan')")
 
-# grab.execute("SELECT * FROM visits WHERE location = 'Michigan'")
+grab.execute("SELECT COUNT(location) AS visits_from FROM visits WHERE location = 'Michigan'")
 
-# print(grab.fetchall())
+print(grab.fetchall())
+print(visitor.gratitude)
 
-# connect.commit()
-# connect.close() 
-
+db.commit()
+db.close() 
