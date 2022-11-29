@@ -1,21 +1,32 @@
 import sqlite3
 from visitor_log import Visitor
 
-db = sqlite3.connect('visitors.db')
+db = sqlite3.connect(':memory:')
 grab = db.cursor()
 
-# grab.execute("""CREATE TABLE visits(
-#             name text,
-#             location text  
-#             )""")
+grab.execute("""CREATE TABLE visits(
+            name text,
+            location text  
+            )""")
 
-visitor = Visitor('Jimmy', 'Michigan') 
-# grab.execute("INSERT INTO visits VALUES ('Marcus', 'Michigan')")
+def insert_visitor(visitor):
+    with db:
+        grab.execute("INSERT INTO visits VALUES (:name, :location)", {'name':visitor.name, 'location': visitor.location})
+        return (visitor.gratitude)
 
-grab.execute("SELECT COUNT(location) AS visits_from FROM visits WHERE location = 'Michigan'")
 
-print(grab.fetchall())
-print(visitor.gratitude)
+def visit_log(location):
+    grab.execute("SELECT COUNT(location) AS visits_from FROM visits WHERE location = :location", {'location': 'Michigan'})
+    return grab.fetchall()
 
-db.commit()
+
+visit1 = Visitor('Tom', 'Michigan') 
+visit2 = Visitor('Jim', 'Michigan') 
+
+insert_visitor(visit1)
+insert_visitor(visit2)
+
+visit = visit_log('Michigan')
+print(visit)
+
 db.close() 
